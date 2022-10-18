@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">NewsApp</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">News App</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+
+
+    <string name="home_nav_title"><b>Latest News App</b></string>
+    <string name="home_nav_title_date_sample">2022–10–22 Wednesday</string>
+    <string name="item_news_title_sample"><b>Five reason why China economy is in trouble</b></string>
+    <string name="item_news_time_sample">8 hours ago</string>
+    <string name="home_title"><b>Local News</b></string>
+
+    <string name="item_news_details_description_sample">The stories reported on major media channels are highly correlated with those mostly discussed in the society. As argued by Nimark and Pitschner (2019), media news could be viewed as the filtered popular</string>
+    <string name="item_news_details_sample_author">By Zoya Mateen</string>
+    <string name="item_news_details_sample_date">2022–10–22</string>
+    <string name="item_news_details_sample_title">The stories reported on major media channels are highly correlated</string>
+</resources>
