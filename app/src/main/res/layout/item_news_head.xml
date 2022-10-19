@@ -1,54 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="10dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="10dp"
-    >
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="mNews"
+            type="com.himesh.newsapp.models.Article" />
+    </data>
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/img_item_news"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@mipmap/ic_launcher"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="10dp">
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:padding="10dp"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/text_item_news_title"
+            <ImageView
+                android:id="@+id/img_item_news"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@mipmap/ic_launcher" />
+
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/item_news_title_sample"
-                android:textColor="@color/black"
-                style="@style/generalLabelTextMediumBold"
-                />
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_item_news_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{mNews.title}"
+                    android:textColor="@color/black"
+                    style="@style/generalLabelTextMediumBold" />
 
 
-            <TextView
-                android:id="@+id/text_item_news_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/item_news_time_sample"
-                style="@style/generalLabelTextSmall"
-                />
+                <TextView
+                    android:id="@+id/text_item_news_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/item_news_time_sample"
+                    style="@style/generalLabelTextSmall" />
+
+
+            </LinearLayout>
 
 
         </LinearLayout>
 
-
-    </LinearLayout>
-
-</com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

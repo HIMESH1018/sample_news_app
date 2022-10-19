@@ -20,4 +20,7 @@
     <string name="item_news_details_sample_author">By Zoya Mateen</string>
     <string name="item_news_details_sample_date">2022–10–22</string>
     <string name="item_news_details_sample_title">The stories reported on major media channels are highly correlated</string>
+    
+    
+    <string name="api_empty_data">News Data Error. Please Try again later</string>
 </resources>

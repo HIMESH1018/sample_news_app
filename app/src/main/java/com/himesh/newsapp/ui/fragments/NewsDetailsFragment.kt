@@ -1,11 +1,10 @@
-package com.himesh.newsapp.ui.home
+package com.himesh.newsapp.ui.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.himesh.newsapp.R
 import com.himesh.newsapp.databinding.FragmentNewsDetailsBinding
 
 
