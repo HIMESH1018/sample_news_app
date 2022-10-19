@@ -3,7 +3,6 @@ package com.himesh.newsapp.ui.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.himesh.newsapp.R
 import com.himesh.newsapp.databinding.ItemNewsHeadBinding
@@ -28,8 +27,7 @@ class NewsAdapter():
     }
 
     override fun onBindViewHolder(holder: NewsDataViewholder, position: Int) {
-        holder.itemViewBinding.mNews = mNewsArticles!![position]
-        holder.bindData()
+        holder.bindData(mNewsArticles!![position])
     }
 
     override fun getItemCount(): Int {
