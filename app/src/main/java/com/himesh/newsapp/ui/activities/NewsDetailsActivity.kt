@@ -3,26 +3,16 @@ package com.himesh.newsapp.ui.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import androidx.activity.viewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.himesh.newsapp.R
 import com.himesh.newsapp.databinding.ActivityNewsDetailsBinding
-import com.himesh.newsapp.databinding.FragmentNewsDetailsBinding
 import com.himesh.newsapp.models.ArticleDetails
-import com.himesh.newsapp.ui.viewmodels.ArticleDetailsViewModel
-import com.himesh.newsapp.ui.viewmodels.HomeViewModel
 import com.himesh.newsapp.utill.NewsAppConstants
-import java.util.logging.Logger
 
 class NewsDetailsActivity : AppCompatActivity(),View.OnClickListener {
 
     private lateinit var mNewsDetailsBinding: ActivityNewsDetailsBinding
-    private var mArguments = Bundle()
     private var temArticleDetails:ArticleDetails? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

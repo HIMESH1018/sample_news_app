@@ -1,5 +1,8 @@
 package com.himesh.newsapp.utill
 
+import android.content.Context
+import android.widget.Toast
+
 object NewsAppConstants {
 
     const val LOG_ERROR = "NEWS_ERROR"
@@ -26,4 +29,14 @@ object NewsAppConstants {
     //Intent
     val TEXT_INTENT = "text/plain"
     val INTENT_PASS_KEY = "news"
+
+
+    fun displayMessage(mContext:Context,text:String){
+        val toast = Toast.makeText(
+            mContext,
+            text,
+            Toast.LENGTH_SHORT
+        )
+        toast.show()
+    }
 }

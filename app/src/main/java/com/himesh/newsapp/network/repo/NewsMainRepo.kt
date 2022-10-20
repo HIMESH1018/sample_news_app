@@ -1,10 +1,8 @@
 package com.himesh.newsapp.network.repo
 
 import android.util.Log
-import com.google.gson.Gson
 import com.himesh.newsapp.network.response.ResponseNews
 import com.himesh.newsapp.utill.NewsAppConstants.LOG_ERROR
-import okhttp3.ResponseBody
 
 object NewsMainRepo {
 

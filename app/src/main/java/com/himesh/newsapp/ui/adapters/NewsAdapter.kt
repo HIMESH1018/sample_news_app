@@ -44,7 +44,6 @@ class NewsAdapter(
 
     fun setItems(articles: ArrayList<Article>) {
         mNewsArticles = articles
-        Log.e("CheckAdapter: ",""+articles.size)
         notifyDataSetChanged()
     }
 

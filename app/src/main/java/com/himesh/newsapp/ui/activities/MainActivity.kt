@@ -1,12 +1,10 @@
 package com.himesh.newsapp.ui.activities
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.View
 import android.widget.ImageButton
-import androidx.activity.viewModels
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -14,15 +12,12 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import com.himesh.newsapp.R
 import com.himesh.newsapp.databinding.ActivityMainBinding
 import com.himesh.newsapp.ui.viewmodels.HomeViewModel
-import com.himesh.newsapp.utill.NetworkConnectivity
-import com.himesh.newsapp.utill.NewsAppConstants
+
 
 class MainActivity : AppCompatActivity(),View.OnClickListener {
 
@@ -91,7 +86,6 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         }
 
     }
-
 
 
 

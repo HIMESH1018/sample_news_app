@@ -4,7 +4,7 @@ import androidx.annotation.Nullable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.himesh.newsapp.models.Article
+
 
 @Entity(tableName = "articles_data_table")
 data class OfflineArticles(

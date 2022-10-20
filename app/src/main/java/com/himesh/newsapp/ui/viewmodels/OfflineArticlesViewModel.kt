@@ -14,6 +14,7 @@ class OfflineArticlesViewModel(private val repository: ArticleRepository): ViewM
     val offlineArticles = repository.article
 
 
+    //auto generated methods
     override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
 
     }

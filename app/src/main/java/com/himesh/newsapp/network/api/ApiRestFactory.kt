@@ -8,7 +8,7 @@ import com.himesh.newsapp.network.api.RestFactoryType
 abstract class ApiRestFactory {
     abstract fun apiInstance(headerInterceptor: WebApiRequestInterceptor): APIClientService
 
-    companion object {
+    companion object { // check the BASE URL TYPE
         fun create(type : RestFactoryType): ApiRestFactory =
             when (type) {
                 RestFactoryType.NEWS -> NewsApiRestFactory

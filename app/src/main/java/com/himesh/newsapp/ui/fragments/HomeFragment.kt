@@ -5,10 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -24,7 +21,6 @@ import com.himesh.newsapp.models.Article
 import com.himesh.newsapp.models.ArticleDetails
 import com.himesh.newsapp.ui.adapters.NewsAdapter
 import com.himesh.newsapp.ui.adapters.OfflineNewsAdapter
-import com.himesh.newsapp.ui.viewmodels.ArticleDetailsViewModel
 import com.himesh.newsapp.ui.viewmodels.HomeViewModel
 import com.himesh.newsapp.ui.viewmodels.OfflineArticlesViewModel
 import com.himesh.newsapp.utill.NetworkConnectivity
@@ -34,7 +30,6 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val homeViewModel: HomeViewModel by viewModels ()
-    private val articleViewmodel:ArticleDetailsViewModel by activityViewModels ()
     private lateinit var mNewsAdapter: NewsAdapter
     private lateinit var mOfflineNewsAdapter: OfflineNewsAdapter
 
@@ -77,7 +72,7 @@ class HomeFragment : Fragment() {
         checkNetwork()
         initializeDB()
         setUpObservers()
-
+        refreshData()
 
 
     }
@@ -108,12 +103,15 @@ class HomeFragment : Fragment() {
         homeViewModel.mArticles.observe(viewLifecycleOwner){
 
             if(it != null) {
+                binding.refreshNews.isRefreshing = false
                 binding.rlNews.visibility = View.VISIBLE
                 mNewsAdapter.setItems(it)
-                Log.e("Check:","checkkk"+it.size)
                 saveArticlesOffline(it)
-                val toast = Toast.makeText(requireContext(), "Fetching data from Online", Toast.LENGTH_SHORT)
-                toast.show()
+
+                NewsAppConstants.displayMessage(
+                    requireContext(),
+                    "Fetching data from Online"
+                )
             }else{
                 binding.rlNews.visibility = View.GONE
                 Log.d(NewsAppConstants.LOG_DATA_CHECK,"All Articles: No Data")
@@ -129,12 +127,15 @@ class HomeFragment : Fragment() {
                     binding.rlNews.visibility = View.VISIBLE
                     binding.progressNewsData.visibility = View.GONE
                     mOfflineNewsAdapter.setItems(it)
-                    val toast = Toast.makeText(
+                    NewsAppConstants.displayMessage(
                         requireContext(),
-                        "Fetching data from offline",
-                        Toast.LENGTH_SHORT
+                        "Fetching data from offline"
                     )
-                    toast.show()
+                }else{
+                    NewsAppConstants.displayMessage(
+                        requireContext(),
+                        "No Saved Data in the DB"
+                    )
                 }
             }
         }
@@ -148,6 +149,16 @@ class HomeFragment : Fragment() {
             }else{
                  setUpOfflineRecycler()
                  dao.getAllArticles()
+            }
+        }
+
+        homeViewModel.mNewsDataSuccessObserver.observe(viewLifecycleOwner){
+
+            if(it != -1) {
+                NewsAppConstants.displayMessage(
+                    requireContext(),
+                    getString(it)
+                )
             }
         }
 
@@ -193,7 +204,6 @@ class HomeFragment : Fragment() {
 
     }
 
-
     private fun setUpOfflineRecycler(){
 
         //Offline
@@ -201,8 +211,10 @@ class HomeFragment : Fragment() {
             //Delete Article
             articleDelete = {
                 offlineArticlesViewModel.deleteSingleArticle(it)
-                val toast = Toast.makeText(requireContext(), "Deleted article ID: $id", Toast.LENGTH_SHORT)
-                toast.show()
+                NewsAppConstants.displayMessage(
+                    requireContext(),
+                    "Deleted article ID: $id"
+                )
                 Log.d(NewsAppConstants.LOG_DATA_CHECK, "ClickID: $it")
             },
             //View the full article
@@ -230,8 +242,7 @@ class HomeFragment : Fragment() {
              article.urlToImage
          )
 
-        Log.e("CheckFEtch",""+articleDetails)
-        articleViewmodel.saveSingleArticles(articleDetails)
+        Log.e(NewsAppConstants.LOG_DATA_CHECK,"DataFetch"+articleDetails)
         fragmentTransfer(articleDetails)
     }
 
@@ -248,8 +259,7 @@ class HomeFragment : Fragment() {
             article.url!!,
             article.image!!
         )
-        Log.e("CheckFEtch",""+articleDetails)
-        articleViewmodel.saveSingleArticles(articleDetails)
+        Log.e(NewsAppConstants.LOG_DATA_CHECK,"DataFetch: "+articleDetails)
         fragmentTransfer(articleDetails)
 
     }
@@ -264,14 +274,22 @@ class HomeFragment : Fragment() {
 
         if(NetworkConnectivity.isConnected(requireContext())){
             homeViewModel.mNetworkConnected.value = true
-            Log.d(NewsAppConstants.LOG_NET_CHECK,"Connected to Internet")
+            Log.d(NewsAppConstants.LOG_NET_CHECK,"Connected to Internet: "+NetworkConnectivity.isConnected(requireContext()))
 
         }else{
             homeViewModel.mNetworkConnected.value = false
+            binding.refreshNews.isEnabled = false
             Log.d(NewsAppConstants.LOG_NET_CHECK,"No Connection")
         }
     }
 
+    private fun refreshData(){
+
+        binding.refreshNews.setOnRefreshListener {
+            homeViewModel.getNewsData()
+
+        }
+    }
 
 }
 

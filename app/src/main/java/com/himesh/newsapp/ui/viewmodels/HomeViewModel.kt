@@ -5,14 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.himesh.newsapp.R
-import com.himesh.newsapp.db.OfflineArticles
 import com.himesh.newsapp.models.Article
 import com.himesh.newsapp.models.ArticleDetails
 import com.himesh.newsapp.network.repo.NewsMainRepo
-import com.himesh.newsapp.network.repo.NewsRepo
 import com.himesh.newsapp.network.response.ResponseNews
 import com.himesh.newsapp.utill.NewsAppConstants
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
@@ -27,7 +24,6 @@ class HomeViewModel : ViewModel() {
 
     val mNetworkConnected = MutableLiveData<Boolean>().apply { value = false }
     val mArticles = MutableLiveData<ArrayList<Article>>()
-    var articleDetails = MutableLiveData<ArticleDetails>()
 
 
 
@@ -35,6 +31,7 @@ class HomeViewModel : ViewModel() {
         try {
             mArticles.value?.clear()
             mProgress.value = true
+            mNewsDataSuccessObserver.value = -1
             viewModelScope.launch {
                 NewsMainRepo.getNews(
                     Q,
@@ -71,10 +68,7 @@ class HomeViewModel : ViewModel() {
 
     }
 
-    fun saveSingleArticles(details: ArticleDetails) {
 
-        articleDetails.postValue(details)
-    }
 
 
 }
