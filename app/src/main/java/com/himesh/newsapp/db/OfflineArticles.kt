@@ -13,9 +13,11 @@ data class OfflineArticles(
     @ColumnInfo(name = "article_ID")
     var id: Int,
 
+    @Nullable
     @ColumnInfo(name = "article_title")
     var title:String?,
 
+    @Nullable
     @ColumnInfo(name = "article_author")
     var author:String?,
 
@@ -23,12 +25,19 @@ data class OfflineArticles(
     @ColumnInfo(name = "article_url")
     var url:String?,
 
+    @Nullable
     @ColumnInfo(name = "article_image")
     var image:String?,
 
+    @Nullable
     @ColumnInfo(name = "article_date")
     var date:String?,
 
+    @Nullable
     @ColumnInfo(name = "article_content")
-    var content:String?
+    var content:String?,
+
+    @Nullable
+    @ColumnInfo(name = "article_description")
+    var description:String?
 )

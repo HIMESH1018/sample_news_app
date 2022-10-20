@@ -10,7 +10,8 @@ import com.himesh.newsapp.db.OfflineArticles
 import com.himesh.newsapp.ui.adapters.viewholders.OfflineNewsDataViewholder
 
 class OfflineNewsAdapter(
-    private val articleDelete: (Int) -> Unit
+    private val articleDelete: (Int) -> Unit,
+    private val articleDetailsView:(OfflineArticles) ->Unit
 ):
     RecyclerView.Adapter<OfflineNewsDataViewholder>() {
 
@@ -29,7 +30,7 @@ class OfflineNewsAdapter(
     }
 
     override fun onBindViewHolder(holder: OfflineNewsDataViewholder, position: Int) {
-        holder.bindData(mOfflineNewsArticles!![position],articleDelete)
+        holder.bindData(mOfflineNewsArticles!![position],articleDelete,articleDetailsView)
     }
 
     override fun getItemCount(): Int {

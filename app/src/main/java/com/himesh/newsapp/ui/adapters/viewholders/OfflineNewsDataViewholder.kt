@@ -19,7 +19,11 @@ class OfflineNewsDataViewholder(
 
 
 
-    fun bindData(article: OfflineArticles, articleDelete: (Int) -> Unit) {
+    fun bindData(
+        article: OfflineArticles,
+        articleDelete: (Int) -> Unit,
+        articleDetailsView: (OfflineArticles) -> Unit
+    ) {
 
         Glide
             .with(context)
@@ -39,6 +43,10 @@ class OfflineNewsDataViewholder(
 
         itemViewBinding.imgItemDelete.setOnClickListener{
             articleDelete(article.id)
+        }
+
+        itemViewBinding.cardViewNews.setOnClickListener{
+            articleDetailsView(article)
         }
 
 

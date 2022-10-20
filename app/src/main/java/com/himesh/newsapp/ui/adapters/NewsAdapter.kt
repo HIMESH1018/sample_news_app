@@ -1,5 +1,6 @@
 package com.himesh.newsapp.ui.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -9,7 +10,9 @@ import com.himesh.newsapp.databinding.ItemNewsHeadBinding
 import com.himesh.newsapp.models.Article
 import com.himesh.newsapp.ui.adapters.viewholders.NewsDataViewholder
 
-class NewsAdapter():
+class NewsAdapter(
+    private val articleDetailsView:(Article) ->Unit
+):
     RecyclerView.Adapter<NewsDataViewholder>() {
 
 
@@ -27,7 +30,7 @@ class NewsAdapter():
     }
 
     override fun onBindViewHolder(holder: NewsDataViewholder, position: Int) {
-        holder.bindData(mNewsArticles!![position])
+        holder.bindData(mNewsArticles!![position],articleDetailsView)
     }
 
     override fun getItemCount(): Int {
@@ -41,6 +44,7 @@ class NewsAdapter():
 
     fun setItems(articles: ArrayList<Article>) {
         mNewsArticles = articles
+        Log.e("CheckAdapter: ",""+articles.size)
         notifyDataSetChanged()
     }
 

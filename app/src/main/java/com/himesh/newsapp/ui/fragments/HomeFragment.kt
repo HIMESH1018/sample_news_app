@@ -1,38 +1,40 @@
 package com.himesh.newsapp.ui.fragments
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.crud_mvvm.viewModels.factories.OfflineArticlesViewModelFactory
+import com.himesh.newsapp.R
 import com.himesh.newsapp.databinding.FragmentHomeBinding
 import com.himesh.newsapp.db.ArticleRepository
 import com.himesh.newsapp.db.ArticlesDAO
 import com.himesh.newsapp.db.OfflineArticles
 import com.himesh.newsapp.db.OfflineArticlesDatabase
 import com.himesh.newsapp.models.Article
+import com.himesh.newsapp.models.ArticleDetails
 import com.himesh.newsapp.ui.adapters.NewsAdapter
 import com.himesh.newsapp.ui.adapters.OfflineNewsAdapter
+import com.himesh.newsapp.ui.viewmodels.ArticleDetailsViewModel
 import com.himesh.newsapp.ui.viewmodels.HomeViewModel
 import com.himesh.newsapp.ui.viewmodels.OfflineArticlesViewModel
 import com.himesh.newsapp.utill.NetworkConnectivity
 import com.himesh.newsapp.utill.NewsAppConstants
-import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels ()
+    private val articleViewmodel:ArticleDetailsViewModel by activityViewModels ()
     private lateinit var mNewsAdapter: NewsAdapter
     private lateinit var mOfflineNewsAdapter: OfflineNewsAdapter
 
@@ -40,6 +42,8 @@ class HomeFragment : Fragment() {
     private lateinit var dao:ArticlesDAO
     private lateinit var repository: ArticleRepository
     private lateinit var factory: ViewModelProvider.Factory
+    private var tempNetwork:Boolean? = null
+    private var mBundle = Bundle()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -54,9 +58,12 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        setUpUI()
-
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setUpUI()
     }
 
 
@@ -67,18 +74,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpUI(){
+        checkNetwork()
         initializeDB()
-        setUpRecycler()
         setUpObservers()
-
-        if(NetworkConnectivity.isConnected(requireActivity())){
-            homeViewModel.getNewsData()
-            Log.d(NewsAppConstants.LOG_NET_CHECK,"Connected to Internet")
-
-        }else{
-            dao.getAllArticles()
-            Log.d(NewsAppConstants.LOG_NET_CHECK,"No Connection")
-        }
 
 
 
@@ -110,11 +108,10 @@ class HomeFragment : Fragment() {
         homeViewModel.mArticles.observe(viewLifecycleOwner){
 
             if(it != null) {
-                mNewsAdapter.setItems(it)
                 binding.rlNews.visibility = View.VISIBLE
-
+                mNewsAdapter.setItems(it)
+                Log.e("Check:","checkkk"+it.size)
                 saveArticlesOffline(it)
-                Log.d(NewsAppConstants.LOG_DATA_CHECK,"All Articles: $it")
                 val toast = Toast.makeText(requireContext(), "Fetching data from Online", Toast.LENGTH_SHORT)
                 toast.show()
             }else{
@@ -127,15 +124,32 @@ class HomeFragment : Fragment() {
 
         offlineArticlesViewModel.offlineArticles.observe(viewLifecycleOwner){
 
-             if (it != null) {
-                 binding.rlNews.visibility = View.VISIBLE
-                 binding.progressNewsData.visibility = View.GONE
-                 mOfflineNewsAdapter.setItems(it)
-                 val toast = Toast.makeText(requireContext(), "Fetching data from offline", Toast.LENGTH_SHORT)
-                 toast.show()
-             }
+            if(!tempNetwork!!) {
+                if (it != null) {
+                    binding.rlNews.visibility = View.VISIBLE
+                    binding.progressNewsData.visibility = View.GONE
+                    mOfflineNewsAdapter.setItems(it)
+                    val toast = Toast.makeText(
+                        requireContext(),
+                        "Fetching data from offline",
+                        Toast.LENGTH_SHORT
+                    )
+                    toast.show()
+                }
+            }
         }
 
+        homeViewModel.mNetworkConnected.observe(viewLifecycleOwner){
+            tempNetwork= it
+            Log.e("Connections","status"+tempNetwork)
+            if(it){
+                setUpOnlineRecycler()
+                homeViewModel.getNewsData()
+            }else{
+                 setUpOfflineRecycler()
+                 dao.getAllArticles()
+            }
+        }
 
     }
 
@@ -158,34 +172,107 @@ class HomeFragment : Fragment() {
                     tempObject.url,
                     tempObject.urlToImage,
                     tempObject.publishedAt,
-                    tempObject.content
+                    tempObject.content,
+                    tempObject.description
                 )
             )
         }
     }
 
-    private fun setUpRecycler(){
+    private fun setUpOnlineRecycler(){
 
         //Online
-        mNewsAdapter = NewsAdapter()
+        mNewsAdapter = NewsAdapter(articleDetailsView = {
+            viewFullArticleFromOnline(it)
+        })
         var articlesList = binding.rlNews
         articlesList.layoutManager = LinearLayoutManager(context)
         articlesList.adapter = mNewsAdapter
 
-        //Offline
-        mOfflineNewsAdapter = OfflineNewsAdapter(articleDelete = {
 
-            offlineArticlesViewModel.deleteSingleArticle(it)
-            val toast = Toast.makeText(requireContext(), "Deleted article ID: $id", Toast.LENGTH_SHORT)
-            toast.show()
-            Log.d(NewsAppConstants.LOG_DATA_CHECK, "ClickID: $it")
-        })
-
-        var offlineArticlesList = binding.rlNews
-        offlineArticlesList.layoutManager = LinearLayoutManager(context)
-        offlineArticlesList.adapter = mOfflineNewsAdapter
 
     }
 
 
+    private fun setUpOfflineRecycler(){
+
+        //Offline
+        mOfflineNewsAdapter = OfflineNewsAdapter(
+            //Delete Article
+            articleDelete = {
+                offlineArticlesViewModel.deleteSingleArticle(it)
+                val toast = Toast.makeText(requireContext(), "Deleted article ID: $id", Toast.LENGTH_SHORT)
+                toast.show()
+                Log.d(NewsAppConstants.LOG_DATA_CHECK, "ClickID: $it")
+            },
+            //View the full article
+            articleDetailsView = {
+                viewFullArticleFromOffline(it)
+            }
+        )
+
+        var offlineArticlesList = binding.rlNews
+        offlineArticlesList.layoutManager = LinearLayoutManager(context)
+        offlineArticlesList.adapter = mOfflineNewsAdapter
+    }
+
+    private fun viewFullArticleFromOnline(article: Article) {
+
+         var articleDetails:ArticleDetails? = null
+
+         articleDetails = ArticleDetails(
+             article.author,
+             article.content,
+             article.description,
+             article.publishedAt,
+             article.title,
+             article.url,
+             article.urlToImage
+         )
+
+        Log.e("CheckFEtch",""+articleDetails)
+        articleViewmodel.saveSingleArticles(articleDetails)
+        fragmentTransfer(articleDetails)
+    }
+
+    private fun viewFullArticleFromOffline(article: OfflineArticles) {
+
+        var articleDetails:ArticleDetails? = null
+
+        articleDetails = ArticleDetails(
+            article.author.orEmpty(),
+            article.content!!,
+            article.description!!,
+            article.date!!,
+            article.title!!,
+            article.url!!,
+            article.image!!
+        )
+        Log.e("CheckFEtch",""+articleDetails)
+        articleViewmodel.saveSingleArticles(articleDetails)
+        fragmentTransfer(articleDetails)
+
+    }
+
+    private fun fragmentTransfer(articleDetails: ArticleDetails) {
+        mBundle.putSerializable(NewsAppConstants.INTENT_PASS_KEY, articleDetails)
+        requireView().findNavController().navigate(R.id.action_nav_home_to_newsDetailsActivity,mBundle)
+
+    }
+
+    private fun checkNetwork(){
+
+        if(NetworkConnectivity.isConnected(requireContext())){
+            homeViewModel.mNetworkConnected.value = true
+            Log.d(NewsAppConstants.LOG_NET_CHECK,"Connected to Internet")
+
+        }else{
+            homeViewModel.mNetworkConnected.value = false
+            Log.d(NewsAppConstants.LOG_NET_CHECK,"No Connection")
+        }
+    }
+
+
 }
+
+

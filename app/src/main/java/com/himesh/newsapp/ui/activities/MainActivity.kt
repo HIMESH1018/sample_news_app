@@ -1,6 +1,7 @@
 package com.himesh.newsapp.ui.activities
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.View
@@ -13,33 +14,44 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
 import com.himesh.newsapp.R
 import com.himesh.newsapp.databinding.ActivityMainBinding
 import com.himesh.newsapp.ui.viewmodels.HomeViewModel
+import com.himesh.newsapp.utill.NetworkConnectivity
+import com.himesh.newsapp.utill.NewsAppConstants
 
 class MainActivity : AppCompatActivity(),View.OnClickListener {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     var drawerLayout: DrawerLayout? = null
-    var btnImgNav:ImageButton? = null
-    private val homeViewModel: HomeViewModel by viewModels()
+    var btnImgNav: ImageButton? = null
+    var navView: NavigationView? = null
+    var navController: NavController? = null
+
+    val homeViewModel:HomeViewModel by lazy {
+        ViewModelProvider(this)[HomeViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setUpNavDrawer()
+
     }
 
 
-    private fun setUpNavDrawer(){
+    private fun setUpNavDrawer() {
 
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         drawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        navView = binding.navView
+        navController = findNavController(R.id.nav_host_fragment_content_main)
         btnImgNav = binding.appBarMain.btnImgNav
         binding.appBarMain.textHomeTitleDate.text = homeViewModel.FROM
         appBarConfiguration = AppBarConfiguration(
@@ -48,7 +60,7 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
             ), drawerLayout
         )
 
-        navView.setupWithNavController(navController)
+        navView!!.setupWithNavController(navController!!)
         btnImgNav!!.setOnClickListener(this)
 
     }
@@ -71,11 +83,17 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
 
     override fun onClick(p0: View?) {
 
-        when(p0){
+        when (p0) {
 
-            btnImgNav ->{
+            btnImgNav -> {
                 setSupportActionBar()
             }
         }
+
     }
+
+
+
+
+
 }

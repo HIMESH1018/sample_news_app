@@ -21,4 +21,9 @@ object NewsAppConstants {
     //API RESPONSE STATUS
 
     const val SUCCESS = "ok"
+
+
+    //Intent
+    val TEXT_INTENT = "text/plain"
+    val INTENT_PASS_KEY = "news"
 }

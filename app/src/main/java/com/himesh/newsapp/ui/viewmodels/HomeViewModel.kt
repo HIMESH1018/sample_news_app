@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.himesh.newsapp.R
 import com.himesh.newsapp.db.OfflineArticles
 import com.himesh.newsapp.models.Article
+import com.himesh.newsapp.models.ArticleDetails
 import com.himesh.newsapp.network.repo.NewsMainRepo
 import com.himesh.newsapp.network.repo.NewsRepo
 import com.himesh.newsapp.network.response.ResponseNews
@@ -26,7 +27,7 @@ class HomeViewModel : ViewModel() {
 
     val mNetworkConnected = MutableLiveData<Boolean>().apply { value = false }
     val mArticles = MutableLiveData<ArrayList<Article>>()
-
+    var articleDetails = MutableLiveData<ArticleDetails>()
 
 
 
@@ -52,23 +53,28 @@ class HomeViewModel : ViewModel() {
 
     private fun processGetNewsData(success: Boolean, results: ResponseNews?, error: String?) {
 
-        if(results != null){
+        if(success) {
+            if (results != null) {
 
-            if(results.status == NewsAppConstants.SUCCESS){
+                if (results.status == NewsAppConstants.SUCCESS) {
 
-                mArticles.postValue(results.articles as ArrayList<Article>?)
+                    mArticles.postValue(results.articles as ArrayList<Article>?)
 
-            }else{
-                mNewsDataSuccessObserver.value = R.string.api_empty_data
+                } else {
+                    mNewsDataSuccessObserver.value = R.string.api_empty_data
+                }
+
             }
-
         }else{
             mNewsDataSuccessObserver.value = R.string.api_empty_data
         }
 
     }
 
+    fun saveSingleArticles(details: ArticleDetails) {
 
+        articleDetails.postValue(details)
+    }
 
 
 }
